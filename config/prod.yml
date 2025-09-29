@@ -1,0 +1,6 @@
+server:
+  addr: :8080
+  startTimeout: 15s
+
+database:
+  url: ${DB_USER}:${DB_PASSWORD}@tcp(${DB_HOST}:${DB_PORT})/${DB_NAME}?charset=utf8mb4&parseTime=True&loc=Local

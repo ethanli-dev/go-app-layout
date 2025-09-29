@@ -1,0 +1,12 @@
+.idea
+.vscode
+.docker
+*.md
+*.log
+bin/
+dist/
+tmp/
+files/
+logs/
+Dockerfile
+docker-compose.yml
