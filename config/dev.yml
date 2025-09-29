@@ -1,0 +1,5 @@
+server:
+  addr: :8080
+  startTimeout: 15s
+database:
+  url: root:ethanli-dev123456@tcp(127.0.0.1:3306)/ethanli-dev?charset=utf8mb4&parseTime=True&loc=Local
