@@ -9,19 +9,30 @@ import (
 )
 
 const (
-	// Common error codes (10000-10999)
-	ErrBadRequest         = 10000
-	ErrUnauthorized       = 10001
-	ErrForbidden          = 10002
-	ErrNotFound           = 10003
-	ErrMethodNotAllowed   = 10004
-	ErrConflict           = 10005
-	ErrTooManyRequests    = 10006
-	ErrInternalServer     = 10007
-	ErrServiceUnavailable = 10008
-	ErrTimeout            = 10009
-	ErrValidation         = 10010
-	ErrPermissionDenied   = 10011
+	// ErrCodeBadRequest 表示请求参数错误（对应HTTP 400）
+	ErrCodeBadRequest = 10000
+	// ErrCodeUnauthorized 表示未授权（对应HTTP 401）
+	ErrCodeUnauthorized = 10001
+	// ErrCodeForbidden 表示权限不足（对应HTTP 403）
+	ErrCodeForbidden = 10002
+	// ErrCodeNotFound 表示资源不存在（对应HTTP 404）
+	ErrCodeNotFound = 10003
+	// ErrCodeMethodNotAllowed 表示方法不支持（对应HTTP 405）
+	ErrCodeMethodNotAllowed = 10004
+	// ErrCodeConflict 表示资源冲突（对应HTTP 409）
+	ErrCodeConflict = 10005
+	// ErrCodeTooManyRequests 表示请求过于频繁（对应HTTP 429）
+	ErrCodeTooManyRequests = 10006
+	// ErrCodeInternalServer 表示服务器内部错误（对应HTTP 500）
+	ErrCodeInternalServer = 10007
+	// ErrCodeServiceUnavailable 表示服务不可用（对应HTTP 503）
+	ErrCodeServiceUnavailable = 10008
+	// ErrCodeTimeout 表示请求超时（对应HTTP 504）
+	ErrCodeTimeout = 10009
+	// ErrCodeValidation 表示数据校验失败
+	ErrCodeValidation = 10010
+	// ErrCodePermissionDenied 表示权限拒绝（更细化的权限错误）
+	ErrCodePermissionDenied = 10011
 )
 
 type WrappedError struct {
@@ -68,40 +79,40 @@ func (e *WrappedError) JSON() map[string]any {
 	}
 }
 
-// Is 判断错误链中是否包含指定错误码
-func Is(err error, code int) bool {
-	if err == nil {
-		return false
-	}
-	var e *WrappedError
-	if errors.As(err, &e) {
-		if e.Code == code {
-			return true
+// IsCode 判断错误链中是否包含指定错误码
+func IsCode(err error, code int) bool {
+	for err != nil {
+		var e *WrappedError
+		if errors.As(err, &e) {
+			if e.Code == code {
+				return true
+			}
 		}
+		err = errors.Unwrap(err)
 	}
-	return Is(errors.Unwrap(err), code)
+	return false
 }
 
 // CodeOf 提取错误链中第一个 WrappedError 的 code
 func CodeOf(err error) int {
-	if err == nil {
-		return -1
+	for err != nil {
+		var e *WrappedError
+		if errors.As(err, &e) {
+			return e.Code
+		}
+		err = errors.Unwrap(err)
 	}
-	var e *WrappedError
-	if errors.As(err, &e) {
-		return e.Code
-	}
-	return CodeOf(errors.Unwrap(err))
+	return 0
 }
 
 // MessageOf 提取错误链中第一个 WrappedError 的 message
 func MessageOf(err error) string {
-	if err == nil {
-		return ""
+	for err != nil {
+		var e *WrappedError
+		if errors.As(err, &e) {
+			return e.Message
+		}
+		err = errors.Unwrap(err)
 	}
-	var e *WrappedError
-	if errors.As(err, &e) {
-		return e.Message
-	}
-	return MessageOf(errors.Unwrap(err))
+	return ""
 }
