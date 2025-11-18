@@ -2,8 +2,6 @@ module github.com/ethanli-dev/go-app-layout
 
 go 1.24.0
 
-toolchain go1.24.7
-
 require (
 	github.com/bytedance/sonic v1.14.2
 	github.com/gin-contrib/cors v1.7.6
