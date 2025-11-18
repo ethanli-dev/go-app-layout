@@ -1,4 +1,5 @@
 server:
+  basePath: /v1
   addr: :8080
   startTimeout: 15s
 database:

@@ -13,9 +13,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/ethanli-dev/go-app-layout/docs"
 	"github.com/ethanli-dev/go-app-layout/pkg/web/middleware"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swagfiles "github.com/swaggo/files"
+	ginswag "github.com/swaggo/gin-swagger"
 )
 
 type Options struct {
@@ -29,6 +32,7 @@ type Options struct {
 	fs             fs.FS
 	middleware     []gin.HandlerFunc
 }
+
 type Option func(*Options)
 
 func WithAddress(address string) Option {
@@ -108,6 +112,8 @@ func New(options ...Option) *Server {
 		option(opts)
 	}
 
+	docs.SwaggerInfo.BasePath = opts.basePath
+
 	gin.SetMode(gin.ReleaseMode)
 
 	engine := gin.New()
@@ -130,13 +136,18 @@ func New(options ...Option) *Server {
 		middleware.I18n(),
 	)
 	engine.Use(opts.middleware...)
+
 	engine.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"status": "ok", "time": time.Now().UnixMilli()})
 	})
+
+	engine.GET("/swagger/*any", ginswag.WrapHandler(swagfiles.Handler))
+
 	if opts.fs != nil {
 		engine.StaticFS(opts.staticPath, http.FS(opts.fs))
 		slog.Info("serving static files", "path", opts.staticPath)
 	}
+	
 	return &Server{
 		baseRoute: engine.Group(opts.basePath),
 		engine:    engine,

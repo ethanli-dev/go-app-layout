@@ -22,12 +22,21 @@ func New(db *gorm.DB) *Router {
 }
 
 func (r *Router) Register(group *gin.RouterGroup) {
-	group.GET("/sql", func(ctx *gin.Context) {
-		r.db.Exec("select 1")
-		types.SuccessWithData(ctx, struct {
-			Data int64
-		}{
-			Data: time.Now().Unix(),
-		})
+	group.GET("/db/ping", r.DbPing)
+}
+
+// Db Ping
+// @Summary Db Ping
+// @Tags db
+// @Accept json
+// @Produce json
+// @Success 200 {object} types.Response[any] "Db Ping"
+// @Router /db/ping [get]
+func (r *Router) DbPing(ctx *gin.Context) {
+	r.db.Exec("select 1")
+	types.SuccessWithData(ctx, struct {
+		Data int64
+	}{
+		Data: time.Now().Unix(),
 	})
 }

@@ -1,0 +1,50 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server celler server.",
+        "title": "Go App Layout API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/db/ping": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "db"
+                ],
+                "summary": "Db Ping",
+                "responses": {
+                    "200": {
+                        "description": "Db Ping",
+                        "schema": {
+                            "$ref": "#/definitions/types.Response-any"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "types.Response-any": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

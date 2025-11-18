@@ -7,6 +7,7 @@ MAIN_PATH="main.go"
 BUILD_PACKAGE="github.com/ethanli-dev/go-app-layout/buildinfo"
 DEFAULT_CONFIG="config/dev.yml"
 WIRE_GEN_PATH="./cmd/server"
+SWAG_GEN_PATH="./docs"
 BUILD_MODE="release"
 
 # 初始化变量
@@ -97,7 +98,7 @@ run() {
     fi
 }
 
-# gen函数（Wire代码生成）
+# gen函数（wire代码生成）
 gen() {
     # 确保GOPATH/bin在PATH中（兼容未显式设置GOPATH的情况）
     export GOPATH="${GOPATH:-$(go env GOPATH)}"
@@ -124,11 +125,37 @@ gen() {
         echo "wire安装成功"
     fi
 
-    # 生成Wire依赖注入代码
-    echo "开始生成Wire代码: wire gen $WIRE_GEN_PATH"
+    # 生成wire依赖注入代码
+    echo "开始生成wire代码: wire gen $WIRE_GEN_PATH"
     wire gen "$WIRE_GEN_PATH"
+    echo "wire代码生成完成"
 
-    echo "Wire代码生成完成"
+    # 检查swag是否已安装
+    if ! command -v swag &> /dev/null; then
+        echo "未找到swag工具，正在安装..."
+
+        # 检查Go环境是否存在
+        check_command "go"  # 复用现有检查函数
+
+        # 安装swag
+        echo "执行安装命令：go install github.com/swaggo/swag/cmd/swag@latest"
+        go install github.com/swaggo/swag/cmd/swag@latest
+
+        # 验证安装结果
+        if ! command -v swag &> /dev/null; then
+            echo "错误：swag安装失败，请检查GOPATH是否正确配置且在PATH中"
+            echo "当前GOPATH: $GOPATH"
+            echo "当前PATH: $PATH"
+            exit 1
+        fi
+
+        echo "swag安装成功"
+    fi
+
+    # 生产swag文档
+    echo "开始生产swag文档: swag init --output "$SWAG_GEN_PATH""
+    swag init --output "$SWAG_GEN_PATH"
+    echo "swag文档生成完成"
 }
 
 # 命令参数解析（支持clean、build、run）
