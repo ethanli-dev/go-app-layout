@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/ethanli-dev/go-app-layout/buildinfo"
+	"github.com/ethanli-dev/go-app-layout/cmd/migrate"
 	"github.com/ethanli-dev/go-app-layout/cmd/server"
 	"github.com/spf13/cobra"
 )
@@ -48,4 +49,5 @@ func Execute() {
 
 func init() {
 	rootCmd.AddCommand(server.StartCmd)
+	rootCmd.AddCommand(migrate.StartCmd)
 }

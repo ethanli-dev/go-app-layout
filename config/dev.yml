@@ -4,3 +4,5 @@ server:
   startTimeout: 15s
 database:
   url: root:ethanli-dev123456@tcp(127.0.0.1:3306)/ethanli-dev?charset=utf8mb4&parseTime=True&loc=Local
+tenant:
+  aes_key: y3v8k2RqZ9LpXcB7WmNwDtGxHjMfKsQ6

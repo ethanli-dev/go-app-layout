@@ -8,7 +8,10 @@ package server
 
 import (
 	"github.com/ethanli-dev/go-app-layout/buildinfo"
-	"github.com/ethanli-dev/go-app-layout/internal/router"
+	"github.com/ethanli-dev/go-app-layout/internal/handler"
+	"github.com/ethanli-dev/go-app-layout/internal/repository"
+	"github.com/ethanli-dev/go-app-layout/internal/server"
+	"github.com/ethanli-dev/go-app-layout/internal/service"
 	"github.com/ethanli-dev/go-app-layout/locales"
 	"github.com/ethanli-dev/go-app-layout/pkg/app"
 	"github.com/ethanli-dev/go-app-layout/pkg/config"
@@ -20,8 +23,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func createRoutes(cfg *config.Config, db *gorm.DB) (*router.Router, error) {
-	panic(wire.Build(router.New))
+func createServer(cfg *config.Config, db *gorm.DB) (*server.Server, error) {
+	panic(wire.Build(server.New, repository.ProviderSet, service.ProviderSet, handler.ProviderSet))
 }
 
 func CreateApp(configPath string) (*app.App, error) {
@@ -68,7 +71,7 @@ func CreateApp(configPath string) (*app.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	routes, err := createRoutes(cfg, db)
+	appServer, err := createServer(cfg, db)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +86,7 @@ func CreateApp(configPath string) (*app.App, error) {
 			web.WithMaxHeaderBytes(cfg.Server.MaxHeaderBytes),
 		}
 	}
-	webServer := web.New(webOpts...).UseRoutes(routes.Register)
+	webServer := web.New(webOpts...).UseRoutes(appServer.Routes)
 	var appOpts []app.Option
 	if cfg.Server != nil {
 		appOpts = []app.Option{
@@ -92,5 +95,5 @@ func CreateApp(configPath string) (*app.App, error) {
 		}
 	}
 
-	return app.New(appOpts...).Use(database.NewService(db), webServer), nil
+	return app.New(appOpts...).Use(database.NewService(db), appServer, webServer), nil
 }

@@ -9,6 +9,8 @@ import (
 )
 
 const (
+	// ErrCodeSuccess 标识请求成功
+	ErrCodeSuccess = 200
 	// ErrCodeBadRequest 表示请求参数错误（对应HTTP 400）
 	ErrCodeBadRequest = 10000
 	// ErrCodeUnauthorized 表示未授权（对应HTTP 401）
@@ -102,7 +104,7 @@ func CodeOf(err error) int {
 		}
 		err = errors.Unwrap(err)
 	}
-	return 0
+	return ErrCodeInternalServer
 }
 
 // MessageOf 提取错误链中第一个 WrappedError 的 message

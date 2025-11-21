@@ -1,5 +1,5 @@
 definitions:
-  types.Response-any:
+  api.Response-any:
     properties:
       code:
         type: integer
@@ -9,24 +9,40 @@ definitions:
       timestamp:
         type: integer
     type: object
+  v1.TenantRequest:
+    properties:
+      description:
+        description: tenant description
+        type: string
+      name:
+        description: tenant name
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a sample server celler server.
   title: Go App Layout API
   version: "1.0"
 paths:
-  /db/ping:
-    get:
+  /tenant/create:
+    post:
       consumes:
       - application/json
+      parameters:
+      - description: Create tenant request
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/v1.TenantRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: Db Ping
+          description: Create tenant response
           schema:
-            $ref: '#/definitions/types.Response-any'
-      summary: Db Ping
+            $ref: '#/definitions/api.Response-any'
+      summary: Create tenant
       tags:
-      - db
+      - tenant
 swagger: "2.0"

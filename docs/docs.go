@@ -15,8 +15,8 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/db/ping": {
-            "get": {
+        "/tenant/create": {
+            "post": {
                 "consumes": [
                     "application/json"
                 ],
@@ -24,14 +24,25 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "db"
+                    "tenant"
                 ],
-                "summary": "Db Ping",
+                "summary": "Create tenant",
+                "parameters": [
+                    {
+                        "description": "Create tenant request",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.TenantRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Db Ping",
+                        "description": "Create tenant response",
                         "schema": {
-                            "$ref": "#/definitions/types.Response-any"
+                            "$ref": "#/definitions/api.Response-any"
                         }
                     }
                 }
@@ -39,7 +50,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "types.Response-any": {
+        "api.Response-any": {
             "type": "object",
             "properties": {
                 "code": {
@@ -51,6 +62,19 @@ const docTemplate = `{
                 },
                 "timestamp": {
                     "type": "integer"
+                }
+            }
+        },
+        "v1.TenantRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "tenant description",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "tenant name",
+                    "type": "string"
                 }
             }
         }

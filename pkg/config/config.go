@@ -117,3 +117,7 @@ func setDefaultConfig() {
 	viper.SetDefault("logging.compress", true)
 	viper.SetDefault("logging.format", "text")
 }
+
+func GetString(key string) string {
+	return viper.GetString(key)
+}

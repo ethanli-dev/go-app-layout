@@ -8,7 +8,10 @@ package server
 
 import (
 	"github.com/ethanli-dev/go-app-layout/buildinfo"
-	"github.com/ethanli-dev/go-app-layout/internal/router"
+	"github.com/ethanli-dev/go-app-layout/internal/handler"
+	"github.com/ethanli-dev/go-app-layout/internal/repository"
+	"github.com/ethanli-dev/go-app-layout/internal/server"
+	"github.com/ethanli-dev/go-app-layout/internal/service"
 	"github.com/ethanli-dev/go-app-layout/locales"
 	"github.com/ethanli-dev/go-app-layout/pkg/app"
 	"github.com/ethanli-dev/go-app-layout/pkg/config"
@@ -21,9 +24,12 @@ import (
 
 // Injectors from wire.go:
 
-func createRoutes(cfg *config.Config, db *gorm.DB) (*router.Router, error) {
-	routerRouter := router.New(db)
-	return routerRouter, nil
+func createServer(cfg *config.Config, db *gorm.DB) (*server.Server, error) {
+	tenantRepository := repository.NewTenantRepository(db)
+	tenantService := service.NewTenantService(tenantRepository)
+	tenantHandler := handler.NewTenantHandler(tenantService)
+	serverServer := server.New(tenantHandler)
+	return serverServer, nil
 }
 
 // wire.go:
@@ -53,7 +59,7 @@ func CreateApp(configPath string) (*app.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	routes, err := createRoutes(cfg, db)
+	appServer, err := createServer(cfg, db)
 	if err != nil {
 		return nil, err
 	}
@@ -61,11 +67,11 @@ func CreateApp(configPath string) (*app.App, error) {
 	if cfg.Server != nil {
 		webOpts = []web.Option{web.WithAddress(cfg.Server.Addr), web.WithBasePath(cfg.Server.BasePath), web.WithReadTimeout(cfg.Server.ReadTimeout), web.WithWriteTimeout(cfg.Server.WriteTimeout), web.WithIdleTimeout(cfg.Server.IdleTimeout), web.WithMaxHeaderBytes(cfg.Server.MaxHeaderBytes)}
 	}
-	webServer := web.New(webOpts...).UseRoutes(routes.Register)
+	webServer := web.New(webOpts...).UseRoutes(appServer.Routes)
 	var appOpts []app.Option
 	if cfg.Server != nil {
 		appOpts = []app.Option{app.WithStartTimeout(cfg.Server.StartTimeout), app.WithShutdownTimeout(cfg.Server.ShutdownTimeout)}
 	}
 
-	return app.New(appOpts...).Use(database.NewService(db), webServer), nil
+	return app.New(appOpts...).Use(database.NewService(db), appServer, webServer), nil
 }
