@@ -32,12 +32,12 @@ func NewTenantHandler(tenantSrv *service.TenantService) *TenantHandler {
 func (th *TenantHandler) Create(ctx *gin.Context) {
 	var req v1.TenantRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		api.Fail(ctx, errorx.New(errorx.ErrCodeBadRequest, "failed to parse request parameters"))
+		api.Failure(ctx, errorx.New(errorx.ErrCodeBadRequest, "failed to parse request parameters"))
 		return
 	}
 	create, err := th.tenantSrv.Create(ctx, &req)
 	if err != nil {
-		api.Fail(ctx, err)
+		api.Failure(ctx, err)
 		return
 	}
 	api.SuccessWithData(ctx, create)

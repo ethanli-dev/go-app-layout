@@ -97,6 +97,6 @@ func SuccessWithData[T any](ctx *gin.Context, data T, messages ...string) {
 	ctx.JSON(http.StatusOK, NewResponse(errorx.ErrCodeSuccess, message, data))
 }
 
-func Fail(ctx *gin.Context, err error) {
+func Failure(ctx *gin.Context, err error) {
 	ctx.JSON(http.StatusOK, NewResponse[any](errorx.CodeOf(err), errorx.MessageOf(err), nil))
 }
