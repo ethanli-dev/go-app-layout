@@ -42,7 +42,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Create tenant response",
                         "schema": {
-                            "$ref": "#/definitions/api.Response-any"
+                            "$ref": "#/definitions/api.Response-model_Tenant"
                         }
                     }
                 }
@@ -50,18 +50,46 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.Response-any": {
+        "api.Response-model_Tenant": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
-                "data": {},
+                "data": {
+                    "$ref": "#/definitions/model.Tenant"
+                },
                 "message": {
                     "type": "string"
                 },
                 "timestamp": {
                     "type": "integer"
+                }
+            }
+        },
+        "model.Tenant": {
+            "type": "object",
+            "properties": {
+                "api_key": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },

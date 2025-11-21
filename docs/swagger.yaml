@@ -1,13 +1,31 @@
 definitions:
-  api.Response-any:
+  api.Response-model_Tenant:
     properties:
       code:
         type: integer
-      data: {}
+      data:
+        $ref: '#/definitions/model.Tenant'
       message:
         type: string
       timestamp:
         type: integer
+    type: object
+  model.Tenant:
+    properties:
+      api_key:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        type: integer
+      updated_at:
+        type: string
     type: object
   v1.TenantRequest:
     properties:
@@ -41,7 +59,7 @@ paths:
         "200":
           description: Create tenant response
           schema:
-            $ref: '#/definitions/api.Response-any'
+            $ref: '#/definitions/api.Response-model_Tenant'
       summary: Create tenant
       tags:
       - tenant

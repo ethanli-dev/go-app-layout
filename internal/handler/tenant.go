@@ -27,7 +27,7 @@ func NewTenantHandler(tenantSrv *service.TenantService) *TenantHandler {
 // @Accept json
 // @Produce json
 // @Param req body v1.TenantRequest true "Create tenant request"
-// @Success 200 {object} api.Response[any] "Create tenant response"
+// @Success 200 {object} api.Response[model.Tenant] "Create tenant response"
 // @Router /tenant/create [post]
 func (th *TenantHandler) Create(ctx *gin.Context) {
 	var req v1.TenantRequest
